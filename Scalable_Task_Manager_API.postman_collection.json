@@ -1,0 +1,239 @@
+{
+	"info": {
+		"_postman_id": "d011761a-285e-409e-840b-5fd398fb3532",
+		"name": "Scalable_Task_Manager_API",
+		"description": "# Introduction\nUsers can create, update, delete, and list tasks\n    - Users can register and login\n\t•\tEach task has a title, description, priority, and due date\n\n# Overview\nThings that the developers should know about\n\n# Authentication\n - Send a request to register at /auth/register providing your username, email and password in JSON format.\n - Then login using the username and password used in register\n\n# Error Codes\n200 - for successful fetches and updates\n201 - for success in registering user and creating tasks\n401 - Unauthorized access\n404 - Not found\n\n# Rate limit\nIs there a limit to the number of requests a user can send?\nNot yet",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12306374"
+	},
+	"item": [
+		{
+			"name": "Register User",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin\",\n    \"email\": \"ade@fr.cd\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/auth/register",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"register"
+					]
+				},
+				"description": "Register new user"
+			},
+			"response": []
+		},
+		{
+			"name": "Login user",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/auth/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"auth",
+						"login"
+					]
+				},
+				"description": "login user using username and password.  \n  \nIt returns a token. This token will be used as a Bearer token in subsequent requests ."
+			},
+			"response": []
+		},
+		{
+			"name": "Create a new Task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRlQGZyLmNkIn0._KTuU-4fUTRXpNxpDkCDkBmj_n8yNjmV9as7tkfwj_Y",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\": \"Sweep the floor using the Roomba this time\",\n    \"done\": false,\n    \"due_date\": \"2025-02-17 15:12:00\",\n    \"name\": \"Sweep the floor\",\n    \"priority\": \"High\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/tasks",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a single task",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a single task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRlQGZyLmNkIn0._KTuU-4fUTRXpNxpDkCDkBmj_n8yNjmV9as7tkfwj_Y",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/tasks/13",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"tasks",
+						"13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update a single task",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRlQGZyLmNkIn0._KTuU-4fUTRXpNxpDkCDkBmj_n8yNjmV9as7tkfwj_Y",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"description\": \"Develop task management API\",\n    \"done\": false,\n    \"due_date\": \"2025-02-19 00:00:00\",\n    \"name\": \"Build API & document it\",\n    \"priority\": \"High\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/tasks/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"tasks",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all tasks",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwidXNlcm5hbWUiOiJhZG1pbiIsImVtYWlsIjoiYWRlQGZyLmNkIn0._KTuU-4fUTRXpNxpDkCDkBmj_n8yNjmV9as7tkfwj_Y",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8000/tasks",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

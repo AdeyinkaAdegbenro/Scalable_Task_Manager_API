@@ -1,0 +1,76 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.api
+    ports:
+      - "8000:8000"
+  db:
+    image: "postgres:12.22"
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGUSER: ${POSTGRES_USER}
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"
+      interval: "10s"
+      timeout: "5s"
+      retries: 5
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+  
+  celery:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.celery
+    depends_on:
+      - redis
+    healthcheck:
+      test: ["CMD", "celery", "-A", "app.celery", "status"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+    command: celery -A app.celery worker --loglevel=info
+    environment:
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL}
+      CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND}
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.celery
+    depends_on:
+      - redis
+      - celery
+    command: celery -A app.celery beat --loglevel=info --schedule=/tmp/celerybeat-schedule
+
+  flower:
+    image: mher/flower
+    ports:
+      - "5555:5555"
+    depends_on:
+      - celery
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - FLOWER_PORT=5555
+      - FLOWER_UNAUTHENTICATED_API=true
+
+volumes:
+  redis-data:
+  pg-data:
